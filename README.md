@@ -1,2 +1,0 @@
-# MiniApp
-MiniApp1
