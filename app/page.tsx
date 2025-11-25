@@ -1,35 +1,64 @@
 'use client';
 
-import { useState } from 'react';
-import { Title, Text, Button, Container, Paper, Group } from '@mantine/core';
+import { useEffect } from 'react';
+import { Title, Text, Button, Container, Paper, Group, Anchor } from '@mantine/core';
 import { Notifications, notifications } from '@mantine/notifications';
+import { ConnectKitButton } from 'connectkit';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { contractAddress, contractAbi } from './constants';
 
 export default function Home() {
-  const [loading, setLoading] = useState(false);
+  const { isConnected } = useAccount();
+  const { data: hash, isPending, writeContract, isError: isWriteError, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed, isError: isReceiptError, error: receiptError } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   const handleMint = async () => {
-    setLoading(true);
-    notifications.show({
-      id: 'mint-start',
-      loading: true,
-      title: 'Minting...',
-      message: 'Submitting transaction to the blockchain.',
-      autoClose: false,
-      withCloseButton: false,
+    writeContract({
+      address: contractAddress,
+      abi: contractAbi,
+      functionName: 'mint',
     });
-
-    // Simulate a delay for the transaction
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    notifications.update({
-      id: 'mint-start',
-      color: 'teal',
-      title: 'Transaction Successful',
-      message: 'Your Neon Origins NFT has been minted!',
-      autoClose: 5000,
-    });
-    setLoading(false);
   };
+
+  useEffect(() => {
+    if (isConfirming) {
+      notifications.show({
+        id: 'mint-start',
+        loading: true,
+        title: 'Minting...',
+        message: 'Submitting transaction to the blockchain.',
+        autoClose: false,
+        withCloseButton: false,
+      });
+    }
+
+    if (isConfirmed) {
+      notifications.update({
+        id: 'mint-start',
+        color: 'teal',
+        title: 'Transaction Successful',
+        message: (
+          <Anchor href={`https://basescan.org/tx/${hash}`} target="_blank">
+            Your Neon Origins NFT has been minted! View on Basescan
+          </Anchor>
+        ),
+        autoClose: 5000,
+      });
+    }
+
+    if (isWriteError || isReceiptError) {
+      notifications.show({
+        color: 'red',
+        title: 'Transaction Failed',
+        message: (writeError?.message || receiptError?.message) || 'An unknown error occurred.',
+        autoClose: 5000,
+      });
+    }
+  }, [isConfirming, isConfirmed, hash, isWriteError, isReceiptError, writeError, receiptError]);
 
   return (
     <Container size="xs" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -45,13 +74,17 @@ export default function Home() {
         <div className="pulsating-orb"></div>
 
         <Group grow>
-          <Button
-            className="mint-button"
-            onClick={handleMint}
-            loading={loading}
-          >
-            Mint
-          </Button>
+          {isConnected ? (
+            <Button
+              className="mint-button"
+              onClick={handleMint}
+              loading={isPending || isConfirming}
+            >
+              {isPending ? 'Confirming...' : (isConfirming ? 'Minting...' : 'Mint')}
+            </Button>
+          ) : (
+            <ConnectKitButton />
+          )}
         </Group>
       </Paper>
     </Container>
