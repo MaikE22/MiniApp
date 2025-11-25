@@ -3,12 +3,13 @@
 import { useEffect } from 'react';
 import { Title, Text, Button, Container, Paper, Group, Anchor } from '@mantine/core';
 import { Notifications, notifications } from '@mantine/notifications';
-import { ConnectKitButton } from 'connectkit';
+import { useModal } from 'connectkit';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { contractAddress, contractAbi } from './constants';
 
 export default function Home() {
   const { isConnected } = useAccount();
+  const { setOpen } = useModal();
   const { data: hash, isPending, writeContract, isError: isWriteError, error: writeError } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed, isError: isReceiptError, error: receiptError } =
@@ -16,12 +17,20 @@ export default function Home() {
       hash,
     });
 
-  const handleMint = async () => {
+  const handleMint = () => {
     writeContract({
       address: contractAddress,
       abi: contractAbi,
       functionName: 'mint',
     });
+  };
+
+  const handleButtonClick = () => {
+    if (!isConnected) {
+      setOpen(true);
+    } else {
+      handleMint();
+    }
   };
 
   useEffect(() => {
@@ -74,17 +83,13 @@ export default function Home() {
         <div className="pulsating-orb"></div>
 
         <Group grow>
-          {isConnected ? (
-            <Button
-              className="mint-button"
-              onClick={handleMint}
-              loading={isPending || isConfirming}
-            >
-              {isPending ? 'Confirming...' : (isConfirming ? 'Minting...' : 'Mint')}
-            </Button>
-          ) : (
-            <ConnectKitButton />
-          )}
+          <Button
+            className="mint-button"
+            onClick={handleButtonClick}
+            loading={isPending || isConfirming}
+          >
+            {isPending ? 'Confirming...' : (isConfirming ? 'Minting...' : 'Mint')}
+          </Button>
         </Group>
       </Paper>
     </Container>
