@@ -1,0 +1,61 @@
+body {
+  background-color: #000000;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.pulsating-orb {
+  width: 200px;
+  height: 200px;
+  margin: 2rem auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,255,255,0.5) 0%, rgba(0,0,0,0) 70%);
+  box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff;
+  animation: pulsate 4s ease-in-out infinite;
+}
+
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff;
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px #ff00ff, 0 0 60px #ff00ff, 0 0 90px #ff00ff;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff;
+  }
+}
+
+.neon-text-cyan {
+  color: #00ffff;
+  text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+}
+
+.neon-text-violet {
+  color: #ff00ff;
+  text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff;
+}
+
+.mint-button {
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 24px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
+  transition: all 0.3s ease-in-out;
+}
+
+.mint-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00ffff, 0 0 40px #ff00ff;
+}
