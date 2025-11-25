@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
@@ -36,12 +36,19 @@
     "wagmi": "^2.19.5"
   },
   "devDependencies": {
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@types/node": "^24.10.1",
     "@types/react": "^18",
     "@typescript-eslint/eslint-plugin": "^8.48.0",
     "@typescript-eslint/parser": "^8.48.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.4",
-    "typescript": "^5.9.3"
+    "pino": "^9.3.2",
+    "pino-pretty": "^11.2.2",
+    "tap": "^18.8.0",
+    "tape": "^5.8.1",
+    "thread-stream": "^0.13.0",
+    "typescript": "^5.9.3",
+    "why-is-node-running": "^2.2.2"
   }
 }

@@ -4,11 +4,12 @@ import { useEffect } from 'react';
 import { Title, Text, Button, Container, Paper, Group, Anchor } from '@mantine/core';
 import { Notifications, notifications } from '@mantine/notifications';
 import { useModal } from 'connectkit';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useConfig } from 'wagmi';
 import { contractAddress, contractAbi } from './constants';
 
 export default function Home() {
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
+  const config = useConfig();
   const { setOpen } = useModal();
   const { data: hash, isPending, writeContract, isError: isWriteError, error: writeError } = useWriteContract();
 
@@ -22,6 +23,8 @@ export default function Home() {
       address: contractAddress,
       abi: contractAbi,
       functionName: 'mint',
+      account: address,
+      chain: config.chains[0],
     });
   };
 
